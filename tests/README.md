@@ -18,6 +18,7 @@
 | `npm run test:unit:node` | Node test runner unit 테스트만 |
 | `npm run test:integration` | 통합 + e2e (DB/Redis 필요) |
 | `npm run test:e2e` | e2e만 |
+| `npm run test:ci` | 단위(test) + 통합·e2e(test:integration) — CI 단일 게이트 |
 | `node --test tests/unit/<file>.test.js` | 단일 파일 실행 |
 
 ## Conventions

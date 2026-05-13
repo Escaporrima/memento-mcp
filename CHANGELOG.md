@@ -1,5 +1,24 @@
 # Changelog
 
+## [3.3.0] - 2026-05-13
+
+기존 API·DB 스키마 호환. Breaking change 없음.
+
+### Changed
+
+- `MemoryConsolidator._runConsolidationCycle`: 21개 stage를 선언형 `stageDefs` 배열로 재구성. `TOTAL_STAGES`가 `stageDefs.length`로 산출되어 SSE/관리 콘솔 진행률이 실제 stage 수와 일치한다. 신규 stage 추가는 배열에 한 항목만 push하면 자동 반영.
+- `package.json` scripts.test:ci: `npm test && npm run test:integration` 구조로 단순화. `test:integration`이 이미 e2e를 포함하므로 중복 `test:e2e` 호출을 제거하고 CI 단일 게이트에 통합 테스트가 누락되던 회귀를 차단한다.
+
+### Tests
+
+- `tests/unit/consolidator-stage-declarative.test.js`: 정적 가드(`TOTAL_STAGES = stageDefs.length`, 21개 stage 선언 존재, 리터럴 잔존 0) + 동적 가드(progress 이벤트의 total/processed 정합)로 4 케이스 회귀 가드.
+
+### Docs
+
+- `tests/README.md`: `npm run test:ci` 단일 게이트 항목 추가.
+
+---
+
 ## [3.2.2] - 2026-05-13
 
 기존 API·DB 스키마 호환. Breaking change 없음.

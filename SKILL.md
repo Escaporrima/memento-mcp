@@ -2,12 +2,13 @@
 
 AI 에이전트가 Memento MCP 기억 서버를 최대 효율로 활용하기 위한 기술 레퍼런스.
 
-## 현재 버전: v3.2.2
+## 현재 버전: v3.3.0
 
-v3.2.2는 `MemoryRememberer.remember` 경로의 PolicyRules 게이트 평가 시점을 통일하고, `MemoryConsolidator._mergeDuplicates`의 그룹 키를 `(key_id, workspace, content_hash)`로 한정한 patch 릴리즈다. 멀티테넌트 환경에서 중복 병합이 키 경계를 넘지 않으며, atomic remember 경로(`MEMENTO_REMEMBER_ATOMIC=true`)에서도 dryRun과 동일한 시점에 policy gate가 동작한다. 상세 변경 내역은 `CHANGELOG.md`를 참조한다.
+v3.3.0은 `MemoryConsolidator._runConsolidationCycle`을 선언형 `stageDefs` 배열로 재구성하여 진행률 정합을 확보하고, `test:ci`에 통합 테스트를 포함하도록 정리한 minor 릴리즈다. 신규 stage 추가 시 배열에 한 항목만 push하면 `TOTAL_STAGES`가 자동 반영되어 SSE/관리 콘솔 진행률이 100%를 초과하던 회귀가 차단된다. CI 단일 게이트(`npm run test:ci`)가 unit + integration + e2e를 모두 커버한다.
 
-v3.2.0~v3.2.1 변경 요약은 다음과 같다.
+v3.2.x 변경 요약은 다음과 같다.
 
+- v3.2.2: `MemoryRememberer.remember`의 PolicyRules 게이트 평가가 dryRun·atomic·non-atomic 분기 모두 단일 시점에 동작하도록 통일. `MemoryConsolidator._mergeDuplicates`의 그룹 키를 `(key_id, workspace, content_hash)`로 한정.
 - v3.2.1: reasoning 모델 응답의 `<think>` 블록 사전 제거를 `parse-json.js`에 도입. 본 SKILL 상단의 기억 도구 사용 규칙 섹션이 추가됐다.
 - v3.2.0: `BatchRememberProcessor` 도입, `EmbeddingWorker`/`MorphemeIndex` 배치 경로 도입, `BATCH_DATABASE_URL` 분리, migration-035 적용.
 
