@@ -1,5 +1,38 @@
 # Changelog
 
+## [4.0.0] - 2026-05-13
+
+기존 API·DB 스키마 호환. 외부 호출자 인터페이스 무변경. major 표시는 storage 어댑터 계층 도입으로 데이터 액세스 surface가 추가됐기 때문이다.
+
+### Added
+
+- `lib/storage/` 어댑터 계층 신설.
+  - `lib/storage/index.js`: `getStorage()` 팩토리. `MEMENTO_STORAGE` 환경변수로 어댑터 선택(기본 `pgvector`).
+  - `lib/storage/PgVectorStore.js`: 기존 `lib/tools/db.js`의 `getPrimaryPool`·`queryWithAgentVector`를 위임 호출하는 어댑터. `engine='pgvector'`, `vectorSupport='native'`.
+  - `lib/storage/SqliteVecStore.js`: v4.1 본격 구현 예정 stub. 모든 메서드가 not-implemented throw.
+  - `lib/storage/README.md`: 어댑터 계층 가이드.
+- `lib/memory/read/SearchScope.js` 신설.
+  - `SearchScope` 값객체. 필드: `workspace`, `caseId`, `resolutionStatus`, `phase`, `affect`, `keyId`.
+  - `applyTo(fragment)` / `fromQuery(sq)` 정적 팩토리.
+
+### Changed
+
+- `lib/memory/read/FragmentSearch.js`: `_executeSearch` 본문의 후처리 보정 4블록(workspace, caseId, resolutionStatus/phase, affect 필터링)을 제거. `_searchL3` WHERE 절에 동일 필드 추가, `_tryHotCache` 결과에 `SearchScope.applyTo` 적용, `fetchGraphNeighbors` 결과에도 호출 직후 동일 필터 적용. L1+HotCache+L2+L3+Graph 결과가 모두 SearchScope 정합 상태로 도착하므로 후처리 보정이 불필요해졌다.
+- `_searchEventId` 동기 반환 계약과 `search()` 응답 구조는 무변경.
+
+### Tests
+
+- `tests/unit/search-scope-contract.test.js`: SearchScope contract 회귀 가드(정적 + 동적).
+- `tests/unit/storage-adapter.test.js`: 어댑터 인터페이스·팩토리 동작·SqliteVecStore not-implemented throw 검증.
+- 누적 185건 회귀 0.
+
+### 향후
+
+- v4.1: `SqliteVecStore` 본격 구현(sqlite-vec npm 의존 + 마이그레이션 SQLite 변환 + lite 모드 e2e). 기존 `lib/memory/*` 호출 사이트를 `getStorage()` 어댑터 경유로 마이그레이션.
+- v4.x: `lib/memory/<File>.js` stub re-export 14개의 점진 제거(외부 호출 사이트를 서브디렉토리 경로로 직접 import 전환 후).
+
+---
+
 ## [3.9.0] - 2026-05-13
 
 기존 API·DB 스키마 호환. 외부 호출자 인터페이스 무변경.
