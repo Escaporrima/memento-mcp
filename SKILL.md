@@ -2,9 +2,11 @@
 
 AI 에이전트가 Memento MCP 기억 서버를 최대 효율로 활용하기 위한 기술 레퍼런스.
 
-## 현재 버전: v3.3.0
+## 현재 버전: v3.4.0
 
-v3.3.0은 `MemoryConsolidator._runConsolidationCycle`을 선언형 `stageDefs` 배열로 재구성하여 진행률 정합을 확보하고, `test:ci`에 통합 테스트를 포함하도록 정리한 minor 릴리즈다. 신규 stage 추가 시 배열에 한 항목만 push하면 `TOTAL_STAGES`가 자동 반영되어 SSE/관리 콘솔 진행률이 100%를 초과하던 회귀가 차단된다. CI 단일 게이트(`npm run test:ci`)가 unit + integration + e2e를 모두 커버한다.
+v3.4.0은 LLM dispatcher 코어(`dispatchChain`)를 export로 분리하여 단위 테스트가 실제 구현을 직접 검증하도록 정리한 minor 릴리즈다. `llmJson`은 chain 빌드·redact만 담당한 뒤 `dispatchChain`에 위임하며, semaphore/deadline/timeout cap 분기는 모두 `dispatchChain` 안에서 동작한다. 단위 테스트가 들고 있던 인라인 dispatcher mirror는 제거됐다. 함께 `docs/concurrency.md`(write 경로별 lock 매트릭스)와 `docs/features.md`(모듈 ledger)가 신설되어 운영·리뷰 보조용 단일 페이지 ledger를 제공한다.
+
+v3.3.0 변경 요약: `MemoryConsolidator._runConsolidationCycle`을 선언형 `stageDefs` 배열로 재구성하여 SSE/관리 콘솔 진행률 정합을 확보. `test:ci`에 통합 테스트를 포함하여 CI 단일 게이트가 unit + integration + e2e를 모두 커버.
 
 v3.2.x 변경 요약은 다음과 같다.
 

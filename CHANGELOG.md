@@ -1,5 +1,25 @@
 # Changelog
 
+## [3.4.0] - 2026-05-13
+
+기존 API·DB 스키마 호환. Breaking change 없음.
+
+### Changed
+
+- `lib/llm/index.js`: dispatcher 코어를 `dispatchChain(chain, prompt, options, deps)`로 추출하여 export. `llmJson`은 chain 빌드·redact만 담당한 뒤 `dispatchChain`에 위임한다. semaphore·deadline·timeout cap 분기는 모두 `dispatchChain` 안에서 동작하며 `deps`로 `getSemaphoreFn`/`getLimitFn`/`concurrencyEnabled`/`concurrencyWaitMs`/`startedAt`을 주입할 수 있어 단위 테스트가 실 구현을 검증한다.
+
+### Tests
+
+- `tests/unit/llm-dispatcher-concurrency.test.js`: 인라인 dispatcher mirror 70여 줄을 제거하고 `dispatchChain` 직접 호출 형태로 재작성. mock provider를 `callJson` 기반으로 통일.
+- `tests/unit/llm-dispatcher-no-inline-mirror.test.js`: dispatcher export 존재, `llmJson` 본문의 chain for-loop 잔존 0, 테스트의 인라인 mirror 정의 0을 정적으로 가드.
+
+### Docs
+
+- `docs/concurrency.md`: write 경로별 lock·격리·재시도 매트릭스. 새 경로 추가 규약과 관련 ENV 정리.
+- `docs/features.md`: 주요 모듈 ledger (입력/출력/실패 모드/ENV/메트릭/migration). 실험적 기능 플래그 표 + 새 모듈 추가 규약.
+
+---
+
 ## [3.3.0] - 2026-05-13
 
 기존 API·DB 스키마 호환. Breaking change 없음.
