@@ -1,5 +1,33 @@
 # Changelog
 
+## [3.7.0] - 2026-05-13
+
+기존 API·DB 스키마 호환. 외부 import 경로 호환 (stub re-export).
+
+### Changed
+
+- `lib/memory/` 14개 핵심 모듈을 6개 서브디렉토리로 분류 이동:
+  - `read/` (FragmentSearch, CaseRecall, LinkedFragmentLoader, RecallSuggestionEngine)
+  - `write/` (FragmentWriter)
+  - `link/` (ReconsolidationEngine)
+  - `consolidate/` (MemoryConsolidator, FragmentGC)
+  - `embedding/` (EmbeddingWorker, EmbeddingCache, MorphemeIndex)
+  - `signals/` (SpreadingActivation, CaseRewardBackprop, NLIClassifier)
+- 외부 호환을 위해 기존 위치(`lib/memory/<File>.js`)에 stub re-export 파일 14개 유지. 호출자 import 경로 무변경.
+- 이동된 파일 내부 import는 stub 경로(`from "../<X>.js"`)를 통해 한 단계 위로 갱신.
+
+### Tests
+
+- `tests/unit/consolidator-stage-declarative.test.js`, `tests/unit/consolidator-merge-tenant-scope.test.js`: 정적 가드의 소스 경로를 `lib/memory/consolidate/MemoryConsolidator.js`로 갱신.
+- 영향권 단위 테스트 125건 통과(회귀 0).
+
+### 향후
+
+- 외부 호출 사이트가 직접 서브디렉토리 경로(`lib/memory/<sub>/<File>.js`)를 import하도록 점진 전환하면 stub 14개를 후속 PR에서 제거할 수 있다.
+- `lib/memory/` 직접 위치에 남은 다른 모듈들(약 25개)은 후속 PR에서 단계적으로 분류한다.
+
+---
+
 ## [3.6.0] - 2026-05-13
 
 기존 API·DB 스키마 호환. Breaking change 없음.

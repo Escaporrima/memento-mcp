@@ -2,9 +2,11 @@
 
 AI 에이전트가 Memento MCP 기억 서버를 최대 효율로 활용하기 위한 기술 레퍼런스.
 
-## 현재 버전: v3.6.0
+## 현재 버전: v3.7.0
 
-v3.6.0은 `CaseRewardBackprop`에 `MEMENTO_CASE_BACKPROP_ENABLED` 런타임 토글을 도입한 minor 릴리즈다. 기본 off이며 미설정 시 backprop 호출이 즉시 반환되어 DB·메트릭 영향이 없다. 함께 `docs/features.md`의 실험 플래그 표가 사실대로 정정되어 dual-mode/항상 활성 기능과 ENV 토글 실험 기능이 명확히 분리됐다.
+v3.7.0은 `lib/memory/`의 14개 핵심 모듈을 6개 서브디렉토리(`read/`, `write/`, `link/`, `consolidate/`, `embedding/`, `signals/`)로 분류 이동한 minor 릴리즈다. 기존 위치(`lib/memory/<File>.js`)에 stub re-export 파일을 유지하므로 외부 호출자의 import 경로는 변경되지 않는다. 신규 코드는 직접 서브디렉토리 경로(`lib/memory/<sub>/<File>.js`)를 사용하면 책임 경계가 명확해진다.
+
+v3.6.0 변경 요약: `CaseRewardBackprop`에 `MEMENTO_CASE_BACKPROP_ENABLED` 런타임 토글 도입(기본 off). `docs/features.md` 실험 플래그 표 정합화.
 
 v3.5.0 변경 요약: `scripts/lint-migrations.js` + `docs/migration-conventions.md`로 신규 마이그레이션 규약을 명문화. `docs/operations/agent-worktree.md`, `docs/operations/upstream-porting.md` 운영 가이드 신설.
 

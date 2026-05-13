@@ -17,7 +17,7 @@ import path              from "node:path";
 
 const here   = path.dirname(fileURLToPath(import.meta.url));
 const source = readFileSync(
-  path.resolve(here, "../../lib/memory/MemoryConsolidator.js"),
+  path.resolve(here, "../../lib/memory/consolidate/MemoryConsolidator.js"),
   "utf-8"
 );
 
