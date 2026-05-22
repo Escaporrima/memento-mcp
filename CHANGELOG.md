@@ -15,6 +15,7 @@
 - L3 형태소 토크나이저를 LLM 서브프로세스(쿼리당 ~10초)에서 로컬 CPU 분석기(MorphemeTokenizer)로 전환. 벤치마크: 1.06ms/call(약 9400배 개선), 상주 RSS +28.9MB.
 - `MorphemeIndex._tokenize()` 내부가 `MEMENTO_MORPHEME_TOKENIZER=local`(기본)일 때 `MorphemeTokenizer.tokenize()`로 위임. `llm` 경로는 기존 `_tokenizeViaLLM()` 그대로 유지.
 - OpenAI 임베딩 경로(`getOrRegisterEmbeddings`) 및 `morpheme_dict` DB 스키마 변경 없음.
+- Docker 베이스 이미지를 `node:20-alpine`에서 `node:24-alpine`으로 상향. garu-ko(WASM)가 요구하는 WASM stringref를 컨테이너 런타임에서 지원하기 위함.
 
 ### Removed
 - jest, @jest/globals, babel-jest devDependencies
