@@ -11,11 +11,19 @@
  * 다른 팀이 수정 완료 후 메인 브랜치에 병합될 때 최종 통과가 보장된다.
  */
 
-import { describe, it } from "node:test";
-import assert           from "node:assert/strict";
-import { readFileSync } from "node:fs";
-import { fileURLToPath } from "node:url";
-import path             from "node:path";
+import { describe, it, after } from "node:test";
+import assert                  from "node:assert/strict";
+import { readFileSync }        from "node:fs";
+import { fileURLToPath }       from "node:url";
+import path                    from "node:path";
+
+import { disconnectRedis } from "../../lib/redis.js";
+import { getPrimaryPool }  from "../../lib/tools/db.js";
+
+after(async () => {
+  await disconnectRedis().catch(() => {});
+  await getPrimaryPool()?.end?.().catch(() => {});
+});
 
 const __dirname   = path.dirname(fileURLToPath(import.meta.url));
 const SOURCE_PATH = path.resolve(__dirname, "../../lib/memory/read/FragmentSearch.js");

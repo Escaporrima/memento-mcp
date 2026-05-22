@@ -9,12 +9,19 @@
  * HTTP 호출 없음 — 인스턴스 직접 생성 + 메서드 호출만 수행.
  */
 
-import { test, describe } from "node:test";
-import assert              from "node:assert/strict";
+import { test, describe, after } from "node:test";
+import assert                    from "node:assert/strict";
 
 import { OllamaProvider }            from "../../lib/llm/providers/OllamaProvider.js";
 import { OpenAICompatibleProvider }  from "../../lib/llm/providers/OpenAICompatibleProvider.js";
 import { circuitBreaker }            from "../../lib/llm/util/circuit-breaker.js";
+import { disconnectRedis }           from "../../lib/redis.js";
+import { getPrimaryPool }            from "../../lib/tools/db.js";
+
+after(async () => {
+  await disconnectRedis().catch(() => {});
+  await getPrimaryPool()?.end?.().catch(() => {});
+});
 
 /**
  * Promise 기반 sleep 헬퍼.

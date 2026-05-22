@@ -287,9 +287,9 @@ describe("세션 토큰 재사용 E2E", { skip: !ENABLED, timeout: 30_000 }, () 
       const second = await postMcp({ body: INIT_BODY, accessKey: altKey });
 
       if (second.status === 401 || second.status === 403) {
-        /** 인증 실패 자체가 다른 토큰 분리의 증거 — PASS로 처리 */
+        /** 인증 거부 자체가 세션 격리 증거이므로 명시적 PASS 처리 (sanity pass) */
         console.log(`[session-reuse] 다른 토큰 → 인증 거부(${second.status}) — 세션 격리 동작 확인`);
-        assert.ok(true);
+        assert.ok(true, "다른 토큰에 대한 인증 거부(401/403)는 세션 격리가 동작한다는 증거");
         return;
       }
 

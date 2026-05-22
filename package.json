@@ -10,9 +10,7 @@
   },
   "scripts": {
     "start": "node server.js",
-    "test": "npm run test:jest && npm run test:unit:node",
-    "test:jest": "node --experimental-vm-modules node_modules/jest/bin/jest.js --runInBand --selectProjects unit",
-    "test:unit:node": "MEMENTO_METRICS_DEFAULT=off node --experimental-test-module-mocks --test 'tests/unit/*.test.js' 'tests/unit/**/*.test.js'",
+    "test": "MEMENTO_METRICS_DEFAULT=off node --experimental-test-module-mocks --test 'tests/unit/*.test.js' 'tests/unit/**/*.test.js'",
     "test:integration": "node --test tests/integration/*.test.js tests/e2e/*.test.js",
     "test:integration:llm": "MEMENTO_METRICS_DEFAULT=off node --test --test-concurrency=1 tests/integration/llm-cli-smoke.test.js tests/integration/llm-timeout.test.js tests/integration/morpheme-llm-real.test.js tests/integration/llm-chain-real.test.js",
     "test:e2e": "node --test --test-concurrency=1 tests/e2e/*.test.js",
@@ -38,7 +36,6 @@
     "winston-daily-rotate-file": "^5.0.0"
   },
   "devDependencies": {
-    "eslint": "^9.0.0",
-    "jest": "^30.2.0"
+    "eslint": "^9.0.0"
   }
 }

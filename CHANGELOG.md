@@ -1,5 +1,21 @@
 # Changelog
 
+## [Unreleased]
+
+### Removed
+- jest, @jest/globals, babel-jest devDependencies
+- jest.config.js
+- tests/*.test.js 11개 (tests/unit/ 동명 파일로 시나리오 흡수, consolidator-metrics는 node:test mock.module로 재작성)
+- npm scripts test:jest, test:unit:node
+
+### Changed
+- npm test가 node --experimental-test-module-mocks --test 단일 호출
+- 동명 충돌 10건 통합 분석 결과 9건은 node:test 측이 완전 변환본, decay만 실질 분기로 jest 측 8건 흡수
+- tests/unit의 hang 8건 cleanup 패턴 표준화 (disconnectRedis + getPrimaryPool().end())
+
+### Fixed
+- 8개 unit 테스트 파일의 Redis/Postgres 연결 미정리로 인한 30~90s hang 해소 (30~90s → 1~3s)
+
 ## [4.2.0] - 2026-05-19
 
 자동 후처리 4개 층위(ProactiveRecall · autoLinkSessionFragments · MemoryConsolidator · AutoReflect)에서 misgrouping·interference·overfit을 유발하는 rewrite-loop 경로를 schema-fit gate로 차단한다. 기존 DB 스키마·외부 API 호환. `tool_reflect` 응답에 `_meta` 블록이 신설되어 `link_suggestions[]` 필드가 신규 노출된다.

@@ -9,11 +9,19 @@
  * 실제 실행 stage 수와 일치해야 한다.
  */
 
-import { describe, it } from "node:test";
-import assert            from "node:assert/strict";
-import { readFileSync }  from "node:fs";
-import { fileURLToPath } from "node:url";
-import path              from "node:path";
+import { describe, it, after } from "node:test";
+import assert                   from "node:assert/strict";
+import { readFileSync }         from "node:fs";
+import { fileURLToPath }        from "node:url";
+import path                     from "node:path";
+
+import { disconnectRedis } from "../../lib/redis.js";
+import { getPrimaryPool }  from "../../lib/tools/db.js";
+
+after(async () => {
+  await disconnectRedis().catch(() => {});
+  await getPrimaryPool()?.end?.().catch(() => {});
+});
 
 const here   = path.dirname(fileURLToPath(import.meta.url));
 const source = readFileSync(

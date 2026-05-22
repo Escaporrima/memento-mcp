@@ -50,12 +50,9 @@ facade와 프로세서 간 공유 프로퍼티(embedder, fragmentStore 등)는 `
 ## Testing
 
 - Unit tests: `tests/unit/` (node:test runner)
+- Integration tests: `tests/integration/` — `npm run test:integration` runs via node:test
 - E2E tests: `tests/e2e/` (requires PostgreSQL)
-- Jest tests: `tests/*.test.js` (root level)
-- Integration tests: `tests/integration/` — 통합 테스트 (node:test runner + Jest integration project)
-  - Jest integration project picks up `tests/integration/**/*.jest.test.js`
-  - `npm run test:integration` runs integration and e2e tests via node:test
-- Run all: `npm test`
+- Run all unit tests: `npm test`
 
 ### 신규 unit 테스트 작성 시 lifecycle 가드 필수
 
@@ -78,8 +75,8 @@ after(async () => {
 ```
 
 - prom-client default metrics는 `MEMENTO_METRICS_DEFAULT=off`로 무력화된다.
-  `npm run test:unit:node` 스크립트가 이 환경변수를 자동 주입한다.
-  단일 파일 실행 시에도 `MEMENTO_METRICS_DEFAULT=off node --test tests/unit/<file>.test.js`로 실행한다.
+  `npm test` 스크립트가 이 환경변수를 자동 주입한다.
+  단일 파일 실행 시에도 `MEMENTO_METRICS_DEFAULT=off node --experimental-test-module-mocks --test tests/unit/<file>.test.js`로 실행한다.
 - 회귀 가드: `tests/unit/test-lifecycle-guard.test.js` 5 케이스가 헬퍼 동작을 검증한다.
 - 상세 내용: `tests/README.md` §Lifecycle 가드 참조
 
