@@ -162,7 +162,7 @@ const makeDeps = () => ({
     linkTemporalNeighbors: async () => {},
   },
   morphemeIndex: {
-    tokenize                : async () => [],
+    tokenize                : async (t) => String(t).toLowerCase().split(/[\s,.]+/).filter(w => w.length > 1).slice(0, 10),
     getOrRegisterEmbeddings : async () => [],
   },
   search: null,

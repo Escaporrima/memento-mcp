@@ -51,7 +51,7 @@ function createMockDeps(overrides = {}) {
       linkTemporalNeighbors: mock.fn(async () => undefined),
     },
     morphemeIndex: {
-      tokenize              : mock.fn(async () => []),
+      tokenize              : mock.fn(async (t) => String(t).toLowerCase().split(/[\s,.]+/).filter(w => w.length > 1).slice(0, 10)),
       getOrRegisterEmbeddings: mock.fn(async () => undefined),
     },
     search,

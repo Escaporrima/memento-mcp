@@ -15,7 +15,7 @@ import assert from "node:assert/strict";
 mock.module("../../lib/memory/MorphemeIndex.js", {
   namedExports: {
     MorphemeIndex: class {
-      async tokenize()               { return []; }
+      async tokenize(t)              { return String(t).toLowerCase().split(/[\s,.]+/).filter(w => w.length > 1).slice(0, 10); }
       async getOrRegisterEmbeddings() { return []; }
     },
   },

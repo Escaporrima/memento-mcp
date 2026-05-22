@@ -36,13 +36,6 @@ mock.module("../../lib/tools/embedding.js", {
   }
 });
 
-mock.module("../../lib/gemini.js", {
-  namedExports: {
-    geminiCLIJson        : mock.fn(async () => []),
-    isGeminiCLIAvailable : mock.fn(async () => false),
-  }
-});
-
 mock.module("../../config/memory.js", {
   namedExports: {
     MEMORY_CONFIG: { morphemeIndex: { maxMorphemes: 10 } }

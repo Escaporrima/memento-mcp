@@ -74,13 +74,6 @@ mock.module("../../config/memory.js", {
   }
 });
 
-mock.module("../../lib/gemini.js", {
-  namedExports: {
-    geminiCLIJson        : mock.fn(async () => []),
-    isGeminiCLIAvailable : mock.fn(async () => false),
-  }
-});
-
 /* ------------------------------------------------------------------ */
 /*  Import after mocks                                                  */
 /* ------------------------------------------------------------------ */
