@@ -1,6 +1,6 @@
 import { test, describe } from "node:test";
 import assert             from "node:assert/strict";
-import { segmentByScript, tokenizeLocal } from "../../lib/memory/embedding/MorphemeTokenizer.js";
+import { segmentByScript, tokenizeLocal, warmup } from "../../lib/memory/embedding/MorphemeTokenizer.js";
 
 describe("segmentByScript", () => {
   test("한·영 혼용을 스크립트 런으로 분리", () => {
@@ -48,6 +48,31 @@ describe("tokenizeLocal", () => {
 
   test("빈 입력은 빈 배열", async () => {
     assert.deepEqual(await tokenizeLocal("", 10), []);
+  });
+});
+
+describe("warmup", () => {
+  test("warmup()은 에러 없이 완료된다", async () => {
+    await assert.doesNotReject(() => warmup());
+  });
+
+  test("warmup() 후 한국어 tokenizeLocal이 정상 반환한다", async () => {
+    await warmup();
+    const tokens = await tokenizeLocal("임베딩 비용 절감", 10);
+    assert.ok(Array.isArray(tokens), "배열 반환");
+    assert.ok(tokens.length > 0, "토큰 1개 이상");
+    assert.ok(tokens.includes("임베딩"), "의미 형태소 포함");
+  });
+
+  test("warmup() 후 영어 tokenizeLocal이 정상 반환한다", async () => {
+    await warmup();
+    const tokens = await tokenizeLocal("embedding cost reduction", 10);
+    assert.ok(Array.isArray(tokens), "배열 반환");
+    assert.ok(tokens.length > 0, "토큰 1개 이상");
+  });
+
+  test("warmup()은 멱등 — 반복 호출해도 에러 없다", async () => {
+    await assert.doesNotReject(() => Promise.all([warmup(), warmup()]));
   });
 });
 

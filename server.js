@@ -44,6 +44,10 @@ import { startSchedulers } from "./lib/scheduler.js";
 /** Reranker 사전 로드 */
 import { preloadReranker } from "./lib/memory/Reranker.js";
 
+/** 형태소 분석기 워밍업 */
+import { warmup as warmupMorpheme } from "./lib/memory/embedding/MorphemeTokenizer.js";
+import { logInfo, logWarn }         from "./lib/logger.js";
+
 /** 임베딩 차원 일관성 검증 */
 import { checkEmbeddingConsistency } from "./scripts/check-embedding-consistency.js";
 
@@ -313,6 +317,14 @@ server.listen(PORT, () => {
 
   /** Reranker 사전 로드 (비차단 — 실패해도 서버 시작 중단 없음) */
   preloadReranker().catch(() => {});
+
+  /** 형태소 분석기 워밍업 (비차단 — garu-ko·PorterStemmer 선제 로드, jieba·kuromoji 제외) */
+  const tokenizerMode = MEMORY_CONFIG?.morphemeIndex?.tokenizer ?? "local";
+  if (tokenizerMode === "local") {
+    warmupMorpheme()
+      .then(() => logInfo("[MorphemeTokenizer] Warmup complete (garu-ko, PorterStemmer)"))
+      .catch(err => logWarn("[MorphemeTokenizer] Warmup failed (non-fatal)", { error: err?.message }));
+  }
 });
 
 /**
