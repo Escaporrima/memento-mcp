@@ -67,9 +67,9 @@ v3.1.1은 LLM Provider 체인 동시성 제어(concurrency semaphore + 429 coold
   - `LLM_CONCURRENCY` (JSON, chainKey 또는 provider name 기준 오버라이드)
 - 메트릭: `memento_llm_provider_concurrency_active{provider}`, `memento_llm_provider_concurrency_wait_ms{provider}`, `memento_llm_provider_429_total{provider}`
 
-### Removal Notice (v3.1.0)
+### `_meta` 응답 필드 사용 의무
 
-recall / context 응답의 top-level `_searchEventId` / `_memento_hint` / `_suggestion` mirror 필드가 v3.1.0에서 완전히 제거됐다. 클라이언트는 `_meta.searchEventId` / `_meta.hints` / `_meta.suggestion` 경로만 사용해야 한다. top-level 필드에 의존하는 코드는 v3.0.0으로 고정하거나 `_meta.*`로 즉시 전환할 것.
+recall / context 응답 메타데이터는 `_meta.searchEventId` / `_meta.hints` / `_meta.suggestion` 경로로만 읽는다. top-level mirror 필드(`_searchEventId` / `_memento_hint` / `_suggestion`)는 v3.1.0에서 제거됐으며, 구버전 클라이언트는 `_meta.*`로 전환한다.
 
 ---
 
@@ -821,7 +821,7 @@ curl 응답 검증 체크:
 - keywords에 플랫폼명 포함: `["memento-mcp", "claude-code", "nerdvana"]`
 - recall 시 플랫폼 필터: `recall(keywords=["claude-code"])`
 
-## 도구 레퍼런스 (16개)
+## 도구 레퍼런스 (17개)
 
 RBAC default-deny: 도구 맵에 등록되지 않은 도구를 호출하면 `"Access denied: tool not permitted"` 오류가 반환된다. 서버 관리자가 허용 도구 목록(`RBAC_TOOL_MAP`)을 명시적으로 관리한다.
 
@@ -1085,6 +1085,23 @@ id가 타 테넌트 소유 파편인 경우 `"Fragment not found or no permissio
 **예시**:
 ```json
 { "keyword": "authentication", "event_type": "error", "limit": 10 }
+```
+
+### session_rotate
+
+**목적**: 현재 세션을 종료하고 새 `sessionId`를 발급한다. 토큰 탈취 의심 시 또는 주기적 로테이션에 사용한다.
+
+**언제 사용**: 키 노출이 의심되거나 스케줄된 회전 시점에서 동일 `bound_key_id` / `workspace` / `permissions`로 새 세션을 발급받을 때.
+
+| 파라미터 | 타입 | 기본값 | 설명 |
+|---|---|---|---|
+| reason | string | - | 회전 사유 (감사 로그 기록). 예: `scheduled_rotation`, `suspected_leak`, `user_request` |
+
+반환값: 새 `sessionId`와 회전 결과.
+
+**예시**:
+```json
+{ "reason": "scheduled_rotation" }
 ```
 
 ## 자동 백그라운드 동작

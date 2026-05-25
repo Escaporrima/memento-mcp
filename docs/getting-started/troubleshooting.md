@@ -194,13 +194,8 @@ INSERT INTO agent_memory.schema_migrations (version) VALUES ('036')
 
 주의: 위 명령은 `psql`에서 직접 실행하거나 트랜잭션 없이 실행해야 한다. `BEGIN;` 블록 안에서 실행하면 오류가 반복된다.
 
-## 11. recall 응답의 `_searchEventId` 필드를 찾을 수 없음
+## 11. 버전 마이그레이션 참고: `_searchEventId` 필드를 찾을 수 없음
 
-문제:
-v2.11.0 이후 recall 응답에서 `_searchEventId` 등의 top-level 필드가 `_meta` 내부로 이동했다.
+구버전 클라이언트에서 발생할 수 있는 호환성 항목.
 
-원인:
-v2.11.0 H1에서 응답 메타데이터가 `_meta: { searchEventId, hints, suggestion }` 래퍼로 통합됐다.
-
-해결 방법:
-`_meta.searchEventId`로 접근한다. 기존 top-level 필드는 v3.0.0까지 `_meta.*`와 동일 값으로 mirror 제공됐으나 v3.1.0에서 제거됐다. 클라이언트 코드를 `_meta` 내부 필드로 전환한다.
+응답 메타데이터는 `_meta.searchEventId` / `_meta.hints` / `_meta.suggestion`에서만 읽는다. top-level mirror 필드는 v3.1.0에서 제거됐으므로 `response._meta.searchEventId` 경로로 클라이언트 코드를 전환한다.
