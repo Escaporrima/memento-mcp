@@ -1,13 +1,21 @@
 /**
- * Memento MCP Server (HTTP) - Context7 Compatible with Authentication
+ * Memento MCP Server (HTTP) — Streamable HTTP / SSE / OAuth 2.0 엔드포인트.
  *
  * 작성자: 최진호
  * 작성일: 2026-01-30
+ * 수정일: 2026-05-26
  *
- * 인증 방식:
- * 1. 세션 초기화(initialize) 시 MEMENTO_ACCESS_KEY 검증
- * 2. 또는 모든 요청에 Authorization: Bearer <key> 헤더 포함
- * 3. 인증 성공 시 README.md를 환영 메시지로 반환
+ * 엔드포인트:
+ *   - POST /mcp                  : Streamable HTTP JSON-RPC (MCP 표준)
+ *   - GET  /mcp                  : SSE 채널 (서버→클라 알림)
+ *   - DELETE /mcp                : 세션 종료
+ *   - GET  /sse, POST /message   : 레거시 SSE 호환 채널
+ *   - GET  /health, /metrics, /openapi.json
+ *   - GET  /.well-known/oauth-* : OAuth 2.0 메타데이터 / 동적 클라이언트 등록
+ *
+ * 인증:
+ *   - Authorization: Bearer <MEMENTO_ACCESS_KEY> 헤더
+ *   - 또는 initialize 시 환경 변수 ACCESS_KEY 일치
  */
 
 import http from "http";

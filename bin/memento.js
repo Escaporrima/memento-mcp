@@ -1,7 +1,22 @@
 #!/usr/bin/env node
+/**
+ * memento-mcp CLI 엔트리포인트.
+ *
+ * 작성자: 최진호
+ * 작성일: 2026-05-26
+ *
+ * 서브커맨드를 lazy-import 방식으로 디스패치한다. `--remote <URL>` 지정 시
+ * 일부 명령(recall/remember/stats/inspect/session)을 원격 MCP 서버로 위임하고,
+ * 로컬 전용 명령은 즉시 거부한다. 명령 실행 후 백그라운드에서 24시간 캐시 기반
+ * 업데이트 확인을 수행하며, UPDATE_CHECK_DISABLED=true 로 비활성화할 수 있다.
+ *
+ * 지원 커맨드: serve, migrate, cleanup, backfill, stats, health, recall, remember,
+ * inspect, update, export, import, completion, session.
+ */
 import "dotenv/config";
 import { parseArgs } from '../lib/cli/parseArgs.js';
 
+/** 서브커맨드 → lazy import 매핑. 각 모듈은 `default(args)`와 선택적 `usage` 문자열을 export한다. */
 const COMMANDS = {
   serve:      () => import('../lib/cli/serve.js'),
   migrate:    () => import('../lib/cli/migrate.js'),
@@ -22,6 +37,9 @@ const COMMANDS = {
 /** 원격 모드를 지원하지 않는 로컬 전용 명령 목록 */
 const LOCAL_ONLY_COMMANDS = new Set(["serve", "migrate", "cleanup", "backfill", "health", "update", "export", "import"]);
 
+/**
+ * `memento-mcp --help` 출력 텍스트를 stdout으로 송출한다.
+ */
 function printUsage() {
   const lines = [
     'Usage: memento-mcp <command> [options]',
@@ -55,6 +73,12 @@ function printUsage() {
   console.log(lines.join('\n'));
 }
 
+/**
+ * CLI 인자 파싱 → 서브커맨드 모듈 로딩 → 실행 → 업데이트 캐시 확인 순으로 진행한다.
+ * 알 수 없는 명령, --remote 위반, 서브커맨드 예외 발생 시 비제로 종료 코드로 종료한다.
+ *
+ * @returns {Promise<void>}
+ */
 async function main() {
   const [cmd, ...rest] = process.argv.slice(2);
 
