@@ -561,7 +561,7 @@ Store multiple fragments at once (for bulk memory input). Batch INSERTs up to 20
 | fragments | object[] | Y | Array of fragments to store (max 200). Each item includes content (string, required), topic (string, required), type (string, required), importance (number), keywords (string[]), workspace (string), idempotencyKey (string, max 128 chars). |
 | workspace | string | - | Batch default workspace. Used for individual fragments without a workspace. Key's default_workspace applied if not specified. |
 | agentId | string | - | Agent ID (for RLS isolation) |
-| stream | boolean | - | When true, sends text/event-stream progress events. A progress event is emitted at each processing phase (Phase A/B/C), and the final response is received via a result event. Also activated when the client sends an Accept: text/event-stream header. |
+| stream | boolean | - | Deprecated: no longer emits SSE progress events. batch_remember returns a standard single JSON response. This parameter is retained for backward compatibility but has no effect on behavior. |
 | async | boolean | - | When true, fire-and-forget (async) mode (default false). Performs only schema validation, content_hash dedup, and quota pre-check synchronously, then enqueues accepted fragments to a Redis queue and immediately returns `{async: true, accepted: N, rejected: N, jobId: "..."}`. The actual INSERT is handled by the background worker (BatchRememberWorker). Falls back to synchronous mode when Redis is disabled (REDIS_ENABLED=false). |
 
 ### async=true Response Example
