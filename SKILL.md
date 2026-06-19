@@ -827,6 +827,18 @@ curl 응답 검증 체크:
 - keywords에 플랫폼명 포함: `["memento-mcp", "claude-code", "my-host"]`
 - recall 시 플랫폼 필터: `recall(keywords=["claude-code"])`
 
+## Codex Desktop / Deferred Tool Discovery (클라이언트 호환)
+
+Codex Desktop 등 일부 MCP 클라이언트는 도구를 deferred/lazy 로딩한다. tool_search가 검색어와 limit에 따라 그 턴에 일부 도구만 노출하므로, 서버 tools/list에 분명히 존재하는 recall이 저장 편향 쿼리+낮은 limit에서 빠질 수 있다.
+
+핵심 원칙: 한 번의 좁은 검색 결과를 서버의 실제 도구 목록으로 오해하지 마라. remember/batch_remember/reflect는 보이는데 recall이 안 보이면, 즉시 더 넓은 쿼리와 큰 limit으로 재검색한다.
+
+재검색 패턴:
+- query: `memento context recall remember reflect batch_remember search_traces reconstruct_history`
+- limit: 20 이상
+
+검증: 서버 raw tools/list에는 context/recall/remember/reflect/batch_remember가 항상 포함된다. healthy 서버에서 특정 턴에 도구가 안 보이면 클라이언트 deferred 검색 한계이지 서버 누락이 아니다.
+
 ## 도구 레퍼런스 (17개)
 
 RBAC default-deny: 도구 맵에 등록되지 않은 도구를 호출하면 `"Access denied: tool not permitted"` 오류가 반환된다. 서버 관리자가 허용 도구 목록(`RBAC_TOOL_MAP`)을 명시적으로 관리한다.
@@ -1040,7 +1052,7 @@ id가 타 테넌트 소유 파편인 경우 `"Fragment not found or no permissio
 
 | 이름 | 타입 | 필수 | 설명 |
 |------|------|------|------|
-| section | string | - | overview, lifecycle, keywords, search, episode, multiplatform, tools, importance |
+| section | string | - | overview, lifecycle, keywords, search, episode, multiplatform, codex, tools, importance, experiential, cbr, triggers, antipatterns |
 
 미지정 시 전체 가이드(~12KB) 반환.
 
